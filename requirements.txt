@@ -1,4 +1,4 @@
-websockets>=15.0.1
+websockets==10.4
 python-dotenv>=1.0.0
 colorama>=0.4.6
 pyfiglet>=1.0.3
