@@ -94,8 +94,12 @@ class VoiceConnector:
         try:
             while True:
                 await asyncio.sleep(interval)
-                if self.websocket and self.websocket.open:
-                    await self.websocket.send(json.dumps({"op": 1, "d": self.sequence}))
+                try:
+                    if self.websocket and self.websocket.open:
+                        await self.websocket.send(json.dumps({"op": 1, "d": self.sequence}))
+                except Exception as e:
+                    await self.print_status(f"Error sending heartbeat: {e}", "error")
+                    raise
         except asyncio.CancelledError:
             return
         except Exception as e:
@@ -228,7 +232,7 @@ class VoiceConnector:
 
 def install_requirements():
     requirements = [
-        'websockets>=10.0',
+        'websockets==10.4',
         'python-dotenv',
         'colorama',
         'pyfiglet',
