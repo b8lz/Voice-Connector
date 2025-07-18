@@ -69,7 +69,7 @@ class VoiceConnector:
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.CYAN}{'='*50}")
         print(f"Voice Connector - Stay In VC 24/7")
-        print(f"{'='*50}{Style.RESET}\n")
+        print(f"{'='*50}{Style.RESET_ALL}\n")
     
     async def print_status(self, message, status_type="info"):
         colors = {
@@ -187,7 +187,7 @@ class VoiceConnector:
                             await self.print_status("Connection timeout, reconnecting...", "warning")
                             break
                             
-            except websockets.exceptions.ConnectionClosed as e:
+            except (websockets.exceptions.ConnectionClosed, websockets.ConnectionClosed) as e:
                 self.connected = False
                 self.reconnect_attempts += 1
                 await self.display_banner()
@@ -228,7 +228,7 @@ class VoiceConnector:
 
 def install_requirements():
     requirements = [
-        'websockets',
+        'websockets>=10.0',
         'python-dotenv',
         'colorama',
         'pyfiglet',
