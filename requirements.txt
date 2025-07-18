@@ -1,4 +1,6 @@
-requests>=2.31.0
-websockets>=11.0.3
+websockets>=15.0.1
 python-dotenv>=1.0.0
-Flask>=2.3.3
+colorama>=0.4.6
+pyfiglet>=1.0.3
+ascii-magic>=2.3.0
+Pillow>=11.3.0
