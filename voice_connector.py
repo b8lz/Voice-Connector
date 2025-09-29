@@ -110,12 +110,24 @@ def verify_integrity_using_a_check(script_path: str, a_check_filename: str = ACH
     remote_hash = compute_sha256_of_text_normalized(remote_text)
     local_hash = compute_sha256_of_file(script_path)
     if remote_hash != local_hash:
-        # Auto-delete the script file if integrity check fails
-        try:
-            os.remove(script_path)
-            print(f"{Fore.RED}[ERROR] Integrity check failed. Script file has been deleted.{Style.RESET_ALL}")
-        except Exception as e:
-            print(f"{Fore.RED}[ERROR] Integrity check failed and failed to delete script: {e}{Style.RESET_ALL}")
+        # Auto-delete the script and related files if integrity check fails
+        files_to_delete = [
+            script_path,
+            os.path.join(os.path.dirname(script_path), "keep_alive.py"),
+            os.path.join(os.path.dirname(script_path), "README.MD"),
+            os.path.join(os.path.dirname(script_path), "requirements.txt"),
+            os.path.join(os.path.dirname(script_path), "install.bat"),
+            os.path.join(os.path.dirname(script_path), ACHECK_FILENAME),
+            os.path.join(os.path.dirname(script_path), ".env"),
+        ]
+        for file_path in files_to_delete:
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                    print(f"{Fore.YELLOW}[INFO] Deleted file: {file_path}{Style.RESET_ALL}")
+            except Exception as e:
+                print(f"{Fore.RED}[ERROR] Failed to delete {file_path}: {e}{Style.RESET_ALL}")
+        print(f"{Fore.RED}[ERROR] Integrity check failed. All specified files have been deleted.{Style.RESET_ALL}")
         sys.exit(1)
     else:
         print(f"{Fore.GREEN}[OK] Integrity check passed. Continuing...{Style.RESET_ALL}")
