@@ -60,7 +60,6 @@ class VoiceConnector:
     def __init__(self):
         self.websocket = None
         self.heartbeat_task = None
-        self.session_id = None
         self.sequence = None
         self.username = "User "
         self.discriminator = "0000"
@@ -72,19 +71,13 @@ class VoiceConnector:
     async def display_banner(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.CYAN}{'='*50}")
-        print(f"Voice Connector - Stay In VC 24/7")
+        print("Voice Connector - Stay In VC 24/7")
         print(f"{Fore.MAGENTA}Made by b8lz")
         print(f"{'='*50}{Style.RESET_ALL}\n")
 
     async def print_status(self, message, status_type="info"):
-        colors = {
-            "info": Fore.CYAN,
-            "success": Fore.GREEN,
-            "warning": Fore.YELLOW,
-            "error": Fore.RED
-        }
+        colors = {"info": Fore.CYAN, "success": Fore.GREEN, "warning": Fore.YELLOW, "error": Fore.RED}
         timestamp = datetime.now().strftime("%H:%M:%S")
-        color = colors.get(status_type, Fore.WHITE)
         print(f"[{timestamp}] {message}")
 
     async def animate_connecting(self):
@@ -98,11 +91,8 @@ class VoiceConnector:
         try:
             while True:
                 await asyncio.sleep(interval)
-                try:
-                    if self.websocket and self.websocket.open:
-                        await self.websocket.send(json.dumps({"op": 1, "d": self.sequence}))
-                except Exception:
-                    pass
+                if self.websocket and self.websocket.open:
+                    await self.websocket.send(json.dumps({"op": 1, "d": self.sequence}))
         except asyncio.CancelledError:
             return
         except Exception:
@@ -131,10 +121,7 @@ class VoiceConnector:
                                 "$browser": "voice_connector",
                                 "$device": "voice_connector"
                             },
-                            "presence": {
-                                "status": CONFIG["status"],
-                                "afk": False
-                            },
+                            "presence": {"status": CONFIG["status"], "afk": False},
                             "compress": False,
                             "intents": 0
                         }
@@ -188,7 +175,7 @@ class VoiceConnector:
                             await self.print_status("Connection timeout, reconnecting...", "warning")
                             break
 
-            except (websockets.exceptions.ConnectionClosed, websockets.ConnectionClosed) as e:
+            except (websockets.exceptions.ConnectionClosed, websockets.ConnectionClosed):
                 self.connected = False
                 self.reconnect_attempts += 1
                 await self.display_banner()
